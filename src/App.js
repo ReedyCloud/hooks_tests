@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
 
-function App() {
+import styles from "./App.module.scss";
+
+import ItemList from "./components/ItemList";
+import ItemCreator from "./components/ItemCreator";
+
+const App = () => {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const getItems = async () => {
+      const response = await fetch(
+        "https://portfolio-c5768.firebaseio.com/items.json"
+      );
+      const responseData = await response.json();
+
+      const fetchedItems = [];
+
+      for (const key in responseData) {
+        fetchedItems.unshift({
+          id: key,
+          name: responseData[key].name,
+          amount: responseData[key].amount,
+        });
+      }
+
+      setItems(fetchedItems);
+    };
+    getItems();
+  }, []);
+
+  const handleAddItem = async (item) => {
+    const postItem = await fetch(
+      "https://portfolio-c5768.firebaseio.com/items.json",
+      {
+        method: "POST",
+        body: JSON.stringify(item),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const itemID = await postItem.json();
+    setItems((prevItems) => [{ id: itemID.name, ...item }, ...prevItems]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.App}>
+      <ItemCreator addItem={handleAddItem} />
+      <ItemList items={items} />
     </div>
   );
-}
-
+};
 export default App;
