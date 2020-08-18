@@ -22,6 +22,7 @@ const ItemCreator = ({ addItem }) => {
         value={itemAmount}
         onChange={(e) => setItemAmount(e.target.value)}
       />
+
       <button
         className={styles.ItemSubmit}
         onClick={() => addItem({ name: itemName, amount: itemAmount })}

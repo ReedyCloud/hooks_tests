@@ -4,6 +4,7 @@ import styles from "./App.module.scss";
 
 import ItemList from "./components/ItemList";
 import ItemCreator from "./components/ItemCreator";
+import Search from "./components/Search";
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -48,6 +49,7 @@ const App = () => {
   return (
     <div className={styles.App}>
       <ItemCreator addItem={handleAddItem} />
+      <Search />
       <ItemList items={items} />
     </div>
   );
