@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 
 import styles from "./App.module.scss";
 
@@ -9,26 +9,8 @@ import Search from "./components/Search";
 const App = () => {
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    const getItems = async () => {
-      const response = await fetch(
-        "https://portfolio-c5768.firebaseio.com/items.json"
-      );
-      const responseData = await response.json();
-
-      const fetchedItems = [];
-
-      for (const key in responseData) {
-        fetchedItems.unshift({
-          id: key,
-          name: responseData[key].name,
-          amount: responseData[key].amount,
-        });
-      }
-
-      setItems(fetchedItems);
-    };
-    getItems();
+  const handleFilteredItems = useCallback((filteredItems) => {
+    setItems(filteredItems);
   }, []);
 
   const handleAddItem = async (item) => {
@@ -49,7 +31,7 @@ const App = () => {
   return (
     <div className={styles.App}>
       <ItemCreator addItem={handleAddItem} />
-      <Search />
+      <Search onLoadItems={handleFilteredItems} />
       <ItemList items={items} />
     </div>
   );

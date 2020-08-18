@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import styles from "./Search.module.scss";
 
-const Search = () => {
+const Search = ({ onLoadItems }) => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
+    const query =
+      filter.length === 0 ? "" : `?orderBy="name"&equalTo="${filter}"`;
     const getItems = async () => {
       const response = await fetch(
-        "https://portfolio-c5768.firebaseio.com/items.json"
+        "https://portfolio-c5768.firebaseio.com/items.json" + query
       );
       const responseData = await response.json();
 
@@ -21,9 +23,10 @@ const Search = () => {
           amount: responseData[key].amount,
         });
       }
+      onLoadItems(fetchedItems);
     };
     getItems();
-  }, [filter]);
+  }, [filter, onLoadItems]);
 
   return (
     <div className={styles.Search}>
